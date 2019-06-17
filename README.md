@@ -108,27 +108,4 @@ node1-->node1
 linkStyle 2 stroke-width:2px,stroke:#f00,stroke-dasharray:5px
 node3-->node4
 ```
-... which renders to this.
-``` mermaid
-graph TB
-classDef style1 stroke-width:1px,fill:#0ff,stroke:#000,stroke-dasharray:5px
-node1("this is node1<br/>textline 2")
-class node1 style1
-click node1 "http://www.example.com" "example"
-node2["this is node2<br/>textline 2"]
-class node2 style1
-subgraph A Subgraph
-subgraph 
-node3["node3"]
-end
-subgraph 
-node4["node4"]
-end
-end
-node1===|line1<br/>line2|node2
-node1-->node2
-linkStyle 1 stroke-width:2px,stroke:#f00,stroke-dasharray:5px
-node1-->node1
-linkStyle 2 stroke-width:2px,stroke:#f00,stroke-dasharray:5px
-node3-->node4
-```
+... which renders to [this](https://mermaidjs.github.io/mermaid-live-editor/#/view/eyJjb2RlIjoiZ3JhcGggVEJcbmNsYXNzRGVmIHN0eWxlMSBzdHJva2Utd2lkdGg6MXB4LGZpbGw6IzBmZixzdHJva2U6IzAwMCxzdHJva2UtZGFzaGFycmF5OjVweFxubm9kZTEoXCJ0aGlzIGlzIG5vZGUxPGJyLz50ZXh0bGluZSAyXCIpXG5jbGFzcyBub2RlMSBzdHlsZTFcbmNsaWNrIG5vZGUxIFwiaHR0cDovL3d3dy5leGFtcGxlLmNvbVwiIFwiZXhhbXBsZVwiXG5ub2RlMltcInRoaXMgaXMgbm9kZTI8YnIvPnRleHRsaW5lIDJcIl1cbmNsYXNzIG5vZGUyIHN0eWxlMVxuc3ViZ3JhcGggQSBTdWJncmFwaFxuc3ViZ3JhcGggXG5ub2RlM1tcIm5vZGUzXCJdXG5lbmRcbnN1YmdyYXBoIFxubm9kZTRbXCJub2RlNFwiXVxuZW5kXG5lbmRcbm5vZGUxPT09fGxpbmUxPGJyLz5saW5lMnxub2RlMlxubm9kZTEtLT5ub2RlMlxubGlua1N0eWxlIDEgc3Ryb2tlLXdpZHRoOjJweCxzdHJva2U6I2YwMCxzdHJva2UtZGFzaGFycmF5OjVweFxubm9kZTEtLT5ub2RlMVxubGlua1N0eWxlIDIgc3Ryb2tlLXdpZHRoOjJweCxzdHJva2U6I2YwMCxzdHJva2UtZGFzaGFycmF5OjVweFxubm9kZTMtLT5ub2RlNCIsIm1lcm1haWQiOnsidGhlbWUiOiJkZWZhdWx0In19).
