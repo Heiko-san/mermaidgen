@@ -5,40 +5,40 @@ import (
 	"strings"
 )
 
-////////// NodeStyle ///////////////////////////////////////////////////////////
-
-type nodeStyle struct {
-	// ro fields
-	id					string
-	// rw fields
-	Fill 				htmlColor	// fill:#f9f
-	Stroke 				htmlColor	// stroke:#333
-	StrokeWidth			uint8		// stroke-width:1px
-	StrokeDash			uint8		// stroke-dasharray:0px
-	More				string		// freestyle text definitions
+// A NodeStyle is used to add CSS to a Node. It renders to a classDef line.
+// Retrieve an instance of NodeStyle via Flowchart's NodeStyle method, do not
+// create instances directly.
+type NodeStyle struct {
+	id          string
+	Fill        htmlColor // renders to something like fill:#f9f
+	Stroke      htmlColor // renders to something like stroke:#333
+	StrokeWidth uint8     // renders to something like stroke-width:2px
+	StrokeDash  uint8     // renders to something like stroke-dasharray:5px
+	More        string    // more styles, e.g.: stroke:#333,stroke-width:1px
 }
 
-func (self *nodeStyle) ID() string {
-	return self.id
+// ID provides access to the NodeStyle's readonly field id.
+func (ns *NodeStyle) ID() (id string) {
+	return ns.id
 }
 
-// render / stringify
-func (self *nodeStyle) String() string {
+// String renders this graph element to a classDef line.
+func (ns *NodeStyle) String() (renderedElement string) {
 	styles := []string{
-		fmt.Sprintf(`stroke-width:%dpx`, self.StrokeWidth),
+		fmt.Sprintf(`stroke-width:%dpx`, ns.StrokeWidth),
 	}
-	if self.Fill != "" {
-		styles = append(styles, fmt.Sprintf(`fill:%s`, self.Fill))
+	if ns.Fill != "" {
+		styles = append(styles, fmt.Sprintf(`fill:%s`, ns.Fill))
 	}
-	if self.Stroke != "" {
-		styles = append(styles, fmt.Sprintf(`stroke:%s`, self.Stroke))
+	if ns.Stroke != "" {
+		styles = append(styles, fmt.Sprintf(`stroke:%s`, ns.Stroke))
 	}
-	if self.StrokeDash != 0 {
+	if ns.StrokeDash != 0 {
 		styles = append(styles, fmt.Sprintf(`stroke-dasharray:%dpx`,
-			self.StrokeDash))
+			ns.StrokeDash))
 	}
-	if self.More != "" {
-		styles = append(styles, self.More)
+	if ns.More != "" {
+		styles = append(styles, ns.More)
 	}
-	return fmt.Sprintf("classDef %s %s\n", self.id, strings.Join(styles,","))
+	return fmt.Sprintf("classDef %s %s\n", ns.id, strings.Join(styles, ","))
 }
