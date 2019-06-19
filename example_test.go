@@ -3,21 +3,21 @@ package mermaidgen_test
 import (
 	"fmt"
 
-	m "github.com/Heiko-san/mermaidgen"
+	"github.com/Heiko-san/mermaidgen"
 )
 
 // Working with Subgraphs
 func ExampleSubgraph() {
-	f := m.NewFlowchart()
+	f := mermaidgen.NewFlowchart()
 	// add some Subgraphs
 	sg1 := f.AddSubgraph("sg1")
 	sg1.Title = "vpc-123"
 	sg2 := sg1.AddSubgraph("sg2")
+	sg2.Title = "AZ a"
 	// oops we forgot to get the reference ...
 	sg1.AddSubgraph("sg3")
-	// ... ok we will look it up then
+	// ... but we can also look it up
 	sg3 := f.GetSubgraph("sg3")
-	sg2.Title = "AZ a"
 	sg3.Title = "AZ b"
 	// add some Nodes to different Subgraphs
 	f.AddEdge(sg2.AddNode("i-123"), sg2.AddNode("mydb"))
@@ -35,6 +35,6 @@ func ExampleSubgraph() {
 	//i-456["i-456"]
 	//end
 	//end
-	//i-123-->mydb
-	//i-456-->mydb
+	//i-123 --> mydb
+	//i-456 --> mydb
 }

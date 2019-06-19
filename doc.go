@@ -22,7 +22,7 @@ Which then creates:
 	graph TB
 	myNodeId1["myNodeId1"]
 	myNodeId2["myNodeId2"]
-	myNodeId1-->myNodeId2
+	myNodeId1 --> myNodeId2
 
 The package supports defining CSS styles, that can be assigned to Nodes and
 Edges.
@@ -34,7 +34,7 @@ Edges.
 	es1.Stroke = "#f00"
 	es1.StrokeWidth = 2
 	node1.Style = ns1
-	node2.Style = ns1
+	node2.Style = chart.NodeStyle("myStyleId1")
 	edge1.Style = es1
 
 There are various useful constants and further styling options, too.
@@ -59,10 +59,12 @@ What we have by now is:
 	click myNodeId1 "http://www.example.com" "go to example"
 	myNodeId2(("myNodeId2"))
 	class myNodeId2 myStyleId1
-	myNodeId1===myNodeId2
+	myNodeId1 === myNodeId2
 	linkStyle 0 stroke-width:2px,stroke:#f00
 
-And there is more. Just explore the API. Start at Flowchart and proceed to
+And there is more. Just explore the package. Start at Flowchart and proceed to
 Subgraph.
 */
 package mermaidgen
+
+//https://godoc.org/github.com/fluhus/godoc-tricks
