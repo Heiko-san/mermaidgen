@@ -1,6 +1,7 @@
 /*
-Package flowchart is an object oriented approach to define mermaid flowcharts
-and render them to mermaid code.
+Package flowchart is an object oriented approach to define mermaid flowcharts as
+defined at https://mermaidjs.github.io/flowchart.html and render them to mermaid
+code.
 
 You use the constructor NewFlowchart to create a new Flowchart object.
 
