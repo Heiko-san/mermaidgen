@@ -1,10 +1,10 @@
 /*
-Package mermaidgen is an object oriented approach to define mermaid flowcharts
+Package flowchart is an object oriented approach to define mermaid flowcharts
 and render them to mermaid code.
 
 You use the constructor NewFlowchart to create a new Flowchart object.
 
-	chart := mermaidgen.NewFlowchart()
+	chart := flowchart.NewFlowchart()
 
 This object is used to construct a graph using various class methods, such as:
 
@@ -39,10 +39,10 @@ Edges.
 
 There are various useful constants and further styling options, too.
 
-	es1.Stroke = mermaidgen.ColorRed
-	node1.Shape = mermaidgen.NShapeRoundRect
-	node2.Shape = mermaidgen.NShapeCircle
-	edge1.Shape = mermaidgen.EShapeThickLine
+	es1.Stroke = flowchart.ColorRed
+	node1.Shape = flowchart.NShapeRoundRect
+	node2.Shape = flowchart.NShapeCircle
+	edge1.Shape = flowchart.EShapeThickLine
 
 Let's add some text and maybe a link.
 
@@ -66,5 +66,3 @@ And there is more. Just explore the package. Start at Flowchart and proceed to
 Subgraph.
 */
 package flowchart
-
-//https://godoc.org/github.com/fluhus/godoc-tricks
