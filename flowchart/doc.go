@@ -65,6 +65,6 @@ What we have by now is:
 And there is more. Just explore the package. Start at Flowchart and proceed to
 Subgraph.
 */
-package mermaidgen
+package flowchart
 
 //https://godoc.org/github.com/fluhus/godoc-tricks

@@ -1,4 +1,4 @@
-package mermaidgen
+package flowchart
 
 import (
 	"fmt"

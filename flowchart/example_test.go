@@ -1,14 +1,14 @@
-package mermaidgen_test
+package flowchart_test
 
 import (
 	"fmt"
 
-	"github.com/Heiko-san/mermaidgen"
+	"github.com/Heiko-san/mermaidgen/flowchart"
 )
 
 // Working with Subgraphs
 func ExampleSubgraph() {
-	f := mermaidgen.NewFlowchart()
+	f := flowchart.NewFlowchart()
 	// add some Subgraphs
 	sg1 := f.AddSubgraph("sg1")
 	sg1.Title = "vpc-123"

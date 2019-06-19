@@ -1,4 +1,4 @@
-package mermaidgen
+package flowchart
 
 import (
 	"encoding/base64"
