@@ -24,14 +24,16 @@ func (ns *NodeStyle) ID() (id string) {
 
 // String renders this graph element to a classDef line.
 func (ns *NodeStyle) String() (renderedElement string) {
-	styles := []string{
-		fmt.Sprintf(`stroke-width:%dpx`, ns.StrokeWidth),
-	}
+	styles := []string{}
 	if ns.Fill != "" {
-		styles = append(styles, fmt.Sprintf(`fill:%s`, ns.Fill))
+		styles = append(styles, "fill:"+string(ns.Fill))
 	}
 	if ns.Stroke != "" {
-		styles = append(styles, fmt.Sprintf(`stroke:%s`, ns.Stroke))
+		styles = append(styles, "stroke:"+string(ns.Stroke))
+	}
+	if ns.StrokeWidth != 1 {
+		styles = append(styles, fmt.Sprintf(`stroke-width:%dpx`,
+			ns.StrokeWidth))
 	}
 	if ns.StrokeDash != 0 {
 		styles = append(styles, fmt.Sprintf(`stroke-dasharray:%dpx`,
@@ -40,5 +42,11 @@ func (ns *NodeStyle) String() (renderedElement string) {
 	if ns.More != "" {
 		styles = append(styles, ns.More)
 	}
-	return fmt.Sprintf("classDef %s %s\n", ns.id, strings.Join(styles, ","))
+	definitions := strings.Join(styles, ",")
+	if definitions == "" {
+		// neutral element as a fallback to ensure empty classDefs don't break
+		// the mermaid syntax
+		definitions = fmt.Sprintf(`stroke-width:%dpx`, ns.StrokeWidth)
+	}
+	return fmt.Sprintf("classDef %s %s\n", ns.id, definitions)
 }

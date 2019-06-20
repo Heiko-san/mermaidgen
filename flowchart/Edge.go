@@ -2,6 +2,7 @@ package flowchart
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 )
 
@@ -48,7 +49,7 @@ func (e *Edge) String() (renderedElement string) {
 	}
 	text := fmt.Sprintf("%s %s %s\n", e.From.id, line, e.To.id)
 	if e.Style != nil {
-		text += fmt.Sprintf(e.Style.String(), e.id)
+		text += fmt.Sprintf(e.Style.String(), strconv.Itoa(e.id))
 	}
 	return text
 }
