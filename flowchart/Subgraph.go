@@ -47,30 +47,26 @@ func (sg *Subgraph) String() (renderedElement string) {
 // returned. The ID can later be used to lookup the created Subgraph using
 // Flowchart's GetSubgraph method.
 func (sg *Subgraph) AddSubgraph(id string) (newSubgraph *Subgraph) {
-	_, found := sg.flowchart.subgraphs[id]
-	if found {
-		// if already exists -> nil
+	_, alreadyExists := sg.flowchart.subgraphs[id]
+	if alreadyExists {
 		return nil
-	} else {
-		s := &Subgraph{id: id, flowchart: sg.flowchart}
-		sg.flowchart.subgraphs[id] = s
-		sg.items = append(sg.items, s)
-		return s
 	}
+	s := &Subgraph{id: id, flowchart: sg.flowchart}
+	sg.flowchart.subgraphs[id] = s
+	sg.items = append(sg.items, s)
+	return s
 }
 
 // AddNode is used to add a new Node to this Subgraph layer. If the provided ID
 // already exists, no new Node is created and nil is returned. The ID can later
 // be used to lookup the created Node using Flowchart's GetNode method.
 func (sg *Subgraph) AddNode(id string) (newNode *Node) {
-	_, found := sg.flowchart.nodes[id]
-	if found {
-		// if already exists -> nil
+	_, alreadyExists := sg.flowchart.nodes[id]
+	if alreadyExists {
 		return nil
-	} else {
-		n := &Node{id: id, Shape: NShapeRect}
-		sg.flowchart.nodes[id] = n
-		sg.items = append(sg.items, n)
-		return n
 	}
+	n := &Node{id: id, Shape: NShapeRect}
+	sg.flowchart.nodes[id] = n
+	sg.items = append(sg.items, n)
+	return n
 }
