@@ -147,16 +147,14 @@ func (fc *Flowchart) EdgeStyle(id string) (style *EdgeStyle) {
 // Flowchart's GetSubgraph method. If you want to add a Subgraph to a Subgraph,
 // use that Subgraph's AddSubgraph method.
 func (fc *Flowchart) AddSubgraph(id string) (newSubgraph *Subgraph) {
-	_, found := fc.subgraphs[id]
-	if found {
-		// if already exists -> nil
+	_, alreadyExists := fc.subgraphs[id]
+	if alreadyExists {
 		return nil
-	} else {
-		s := &Subgraph{id: id, flowchart: fc}
-		fc.subgraphs[id] = s
-		fc.items = append(fc.items, s)
-		return s
 	}
+	s := &Subgraph{id: id, flowchart: fc}
+	fc.subgraphs[id] = s
+	fc.items = append(fc.items, s)
+	return s
 }
 
 // AddNode is used to add a new Node to the Flowchart. If the provided ID
@@ -164,16 +162,14 @@ func (fc *Flowchart) AddSubgraph(id string) (newSubgraph *Subgraph) {
 // be used to lookup the created Node using Flowchart's GetNode method.
 // If you want to add a Node to a Subgraph, use that Subgraph's AddNode method.
 func (fc *Flowchart) AddNode(id string) (newNode *Node) {
-	_, found := fc.nodes[id]
-	if found {
-		// if already exists -> nil
+	_, alreadyExists := fc.nodes[id]
+	if alreadyExists {
 		return nil
-	} else {
-		n := &Node{id: id, Shape: NShapeRect}
-		fc.nodes[id] = n
-		fc.items = append(fc.items, n)
-		return n
 	}
+	n := &Node{id: id, Shape: NShapeRect}
+	fc.nodes[id] = n
+	fc.items = append(fc.items, n)
+	return n
 }
 
 // AddEdge is used to add a new Edge to the Flowchart. Since Edges have no IDs
