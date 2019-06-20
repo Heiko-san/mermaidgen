@@ -33,7 +33,7 @@ func ExampleEdge() {
 	//n2["n2"]
 	//n1 -.-|"first line<br/>second line<br/>third line"| n2
 	//n2 --> n1
-	//linkStyle 1  stroke:#0ff
+	//linkStyle 1 stroke:#0ff
 }
 
 // Accessing the readonly fields of an Edge

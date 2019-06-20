@@ -62,7 +62,7 @@ func (es *EdgeStyle) String() (renderedElement string) {
 		// the mermaid syntax
 		definitions = fmt.Sprintf(`stroke-width:%dpx`, es.StrokeWidth)
 	}
-	if definitions != "" {
+	if definitions != "" && interpolation != "" {
 		interpolation += " "
 	}
 	return `linkStyle %s ` + interpolation + definitions + "\n"

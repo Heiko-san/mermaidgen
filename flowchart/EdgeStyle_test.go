@@ -32,9 +32,9 @@ func ExampleEdgeStyle() {
 	//n1["n1"]
 	//n2["n2"]
 	//n1 --> n2
-	//linkStyle 0  stroke-width:1px
+	//linkStyle 0 stroke-width:1px
 	//n1 --> n2
-	//linkStyle 1  stroke:#f00,stroke-width:2px,stroke-dasharray:5px,font-size:20px
+	//linkStyle 1 stroke:#f00,stroke-width:2px,stroke-dasharray:5px,font-size:20px
 }
 
 // Accessing the readonly fields of an EdgeStyle
