@@ -44,7 +44,7 @@ func (e *Edge) ID() (id int) {
 func (e *Edge) String() (renderedElement string) {
 	line := string(e.Shape)
 	if len(e.Text) > 0 {
-		line += fmt.Sprintf(`|%s|`, strings.Join(e.Text, "<br/>"))
+		line += fmt.Sprintf(`|"%s"|`, strings.Join(e.Text, "<br/>"))
 	}
 	text := fmt.Sprintf("%s %s %s\n", e.From.id, line, e.To.id)
 	if e.Style != nil {
