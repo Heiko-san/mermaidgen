@@ -113,15 +113,18 @@ func (g *Gantt) AddSection(id string) (newSection *Section) {
 }
 
 // AddTask ...
-func (g *Gantt) AddTask(id string) (newTask *Task) {
+func (g *Gantt) AddTask(id string, init ...interface{}) (newTask *Task, err error) {
 	_, alreadyExists := g.tasksMap[id]
 	if alreadyExists {
-		return nil
+		return nil, fmt.Errorf("id already exists")
 	}
-	t := &Task{id: id, gantt: g, section: nil}
+	t, e := taskNew(id, g, nil, init)
+	if e != nil {
+		return nil, e
+	}
 	g.tasksMap[id] = t
 	g.tasks = append(g.tasks, t)
-	return t
+	return t, nil
 }
 
 ////////// get Items ///////////////////////////////////////////////////////////

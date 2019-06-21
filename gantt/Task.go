@@ -3,9 +3,15 @@ package gantt
 import (
 	"fmt"
 	"math"
+	"regexp"
 	"strings"
 	"time"
 )
+
+// IsValidID is used to check if Task IDs are valid: IsValidID(string) bool.
+// These limitations don't apply to Section IDs which are Section's titles at
+// the same time.
+var IsValidID = regexp.MustCompile(`^[a-zA-Z0-9_-]+$`).MatchString
 
 // Task represents gantt tasks that can be added to Sections or the Gantt
 // diagram itself. Create an instance of Task via Gantt's or Section's AddTask
@@ -22,6 +28,52 @@ type Task struct {
 	Critical bool           // The crit flag
 	Active   bool           // The active flag
 	Done     bool           // The done flag
+}
+
+// Private constructor for use in Add-functions.
+func taskNew(i string, g *Gantt, s *Section, p []interface{}) (*Task, error) {
+	if !IsValidID(i) {
+		return nil, fmt.Errorf("invalid id")
+	}
+	t := &Task{id: i, gantt: g, section: s}
+	switch l, ok := len(p), false; {
+	case l > 5:
+		t.Done, ok = p[5].(bool)
+		if !ok {
+			return nil, fmt.Errorf("value for Done was no bool")
+		}
+		fallthrough
+	case l > 4:
+		t.Active, ok = p[4].(bool)
+		if !ok {
+			return nil, fmt.Errorf("value for Active was no bool")
+		}
+		fallthrough
+	case l > 3:
+		t.Critical, ok = p[3].(bool)
+		if !ok {
+			return nil, fmt.Errorf("value for Critical was no bool")
+		}
+		fallthrough
+	case l > 2:
+		err := t.SetStart(p[2])
+		if err != nil {
+			return nil, err
+		}
+		fallthrough
+	case l > 1:
+		err := t.SetDuration(p[1])
+		if err != nil {
+			return nil, err
+		}
+		fallthrough
+	case l > 0:
+		t.Title, ok = p[0].(string)
+		if !ok {
+			return nil, fmt.Errorf("value for Title was no string")
+		}
+	}
+	return t, nil
 }
 
 // ID provides access to the Task's readonly field id.
@@ -63,11 +115,9 @@ func (t *Task) String() (renderedElement string) {
 	// functional
 	if t.Start != nil {
 		// id without start statement breaks syntax
-		tokens = append(tokens, t.id)
-		tokens = append(tokens, t.Start.Format(time.RFC3339))
+		tokens = append(tokens, t.id, t.Start.Format(time.RFC3339))
 	} else if t.After != nil {
-		tokens = append(tokens, t.id)
-		tokens = append(tokens, "after "+t.After.id)
+		tokens = append(tokens, t.id, "after "+t.After.id)
 	}
 	duration := "1d"
 	if t.Duration != nil {
@@ -100,25 +150,25 @@ func (t *Task) SetStart(start interface{}) (err error) {
 			x, err := time.Parse(time.RFC3339, tStart)
 			if err != nil {
 				return fmt.Errorf(
-					`string "%s" is neither RFC3339 nor a valid Task ID`,
+					`SetStart: "%s" is neither RFC3339 nor a valid Task ID`,
 					tStart)
 			}
 			t.Start = &x
 		}
 	default:
-		return fmt.Errorf("unsupported type: %T", start)
+		return fmt.Errorf("SetStart: unsupported type %T", start)
 	}
 	return nil
 }
 
 // Helperfunction to deduplicate code.
 func (t *Task) setDurationFromTime(endTime *time.Time) (err error) {
-	if t.Start != nil {
+	if t.Start != nil && endTime != nil {
 		duration := endTime.Sub(*t.Start)
 		t.Duration = &duration
 		return nil
 	}
-	return fmt.Errorf("can't calculate duration, Start is not defined")
+	return fmt.Errorf("SetDuration: can't calculate duration from end time")
 }
 
 // Helperfunction to deduplicate code.
@@ -126,7 +176,8 @@ func (t *Task) setDurationFromTask(task *Task) {
 	if task.Duration == nil {
 		t.Duration = nil
 	} else {
-		*t.Duration = *task.Duration
+		newDur := *task.Duration
+		t.Duration = &newDur
 	}
 }
 
@@ -156,13 +207,13 @@ func (t *Task) SetDuration(duration interface{}) (err error) {
 			x, err := time.ParseDuration(tDuration)
 			if err != nil {
 				return fmt.Errorf(
-					`string "%s" is neither a valid duration nor Task ID`,
+					`SetDuration: "%s" is neither a valid duration nor Task ID`,
 					tDuration)
 			}
 			t.Duration = &x
 		}
 	default:
-		return fmt.Errorf("unsupported type: %T", duration)
+		return fmt.Errorf("SetDuration: unsupported type %T", duration)
 	}
 	return nil
 }

@@ -1,6 +1,8 @@
 package gantt
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type Section struct {
 	id    string
@@ -17,15 +19,19 @@ func (s *Section) String() (renderedElement string) {
 }
 
 // AddTask ...
-func (s *Section) AddTask(id string) (newTask *Task) {
+// If error
+func (s *Section) AddTask(id string, init ...interface{}) (newTask *Task, err error) {
 	_, alreadyExists := s.gantt.tasksMap[id]
 	if alreadyExists {
-		return nil
+		return nil, fmt.Errorf("id already exists")
 	}
-	t := &Task{id: id, gantt: s.gantt, section: s}
+	t, e := taskNew(id, s.gantt, s, init)
+	if e != nil {
+		return nil, e
+	}
 	s.gantt.tasksMap[id] = t
 	s.tasks = append(s.tasks, t)
-	return t
+	return t, nil
 }
 
 /*
