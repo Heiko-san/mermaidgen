@@ -76,6 +76,25 @@ func taskNew(i string, g *Gantt, s *Section, p []interface{}) (*Task, error) {
 	return t, nil
 }
 
+// CopyFields sets all (non-readonly) fields according to the given Task.
+func (t *Task) CopyFields(task *Task) {
+	if task != nil {
+		t.Critical = task.Critical
+		t.Active = task.Active
+		t.Done = task.Done
+		t.Title = task.Title
+		// After should be copied as pointer to the same object
+		t.After = task.After
+		t.SetDuration(task)
+		if task.Start == nil {
+			t.Start = nil
+		} else {
+			timeNew := *task.Start
+			t.Start = &timeNew
+		}
+	}
+}
+
 // ID provides access to the Task's readonly field id.
 func (t *Task) ID() (id string) {
 	return t.id

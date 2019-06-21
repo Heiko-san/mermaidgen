@@ -62,9 +62,12 @@ func ExampleTask_settingValues() {
 	t5.SetDuration("id3")
 	// duration string
 	t6.SetDuration("12h30m30s")
-	// and finally you can provide values directly to AddTask method
+	// you can provide values directly to AddTask method
 	// (id, Title, SetDuration(), SetStart(), Critical, Active, Done)
-	g.AddTask("id7", "A Task", time.Hour*20, timestamp, true, true, true)
+	t7, _ := g.AddTask("id7", "A Task", time.Hour*20, timestamp, true, true, true)
+	// finally you can copy the settings from other Tasks
+	t8, _ := g.AddTask("id8")
+	t8.CopyFields(t7)
 	fmt.Print(g)
 	//Output:
 	//gantt
@@ -76,6 +79,7 @@ func ExampleTask_settingValues() {
 	//id5 : id5, after id4, 36000s
 	//id6 : id6, 2019-06-20T11:15:30+02:00, 45030s
 	//A Task : crit, active, done, id7, 2019-06-20T09:15:30Z, 72000s
+	//A Task : crit, active, done, id8, 2019-06-20T09:15:30Z, 72000s
 }
 
 // The creation of Tasks may yield errors
@@ -122,5 +126,54 @@ func TestErrors(t *testing.T) {
 	}
 	if _, err := g.AddTask("id1", "", "1h", time.Now(), true, true, 5); err == nil {
 		t.Errorf("no error returned: Invalid flags")
+	}
+}
+
+func TestCopy(t *testing.T) {
+	g := gantt.NewGantt()
+	s := g.AddSection("s")
+	t0, _ := g.AddTask("id0")
+	t1, _ := s.AddTask("id1", "title", "1h")
+	t1.Active = true
+	t1.After = t0
+	t2, _ := g.AddTask("id2")
+	t2.CopyFields(t1)
+	if t1.Critical != t2.Critical {
+		t.Fail()
+	}
+	if t1.Active != t2.Active {
+		t.Fail()
+	}
+	if t1.Done != t2.Done {
+		t.Fail()
+	}
+	if t2.After != t0 {
+		t.Fail()
+	}
+	if t1.Duration == t2.Duration {
+		t.Fail()
+	}
+	if *t1.Duration != *t2.Duration {
+		t.Fail()
+	}
+	if t2.Start != nil {
+		t.Fail()
+	}
+	if t1.Title != t2.Title {
+		t.Fail()
+	}
+	if t1.ID() == t2.ID() {
+		t.Fail()
+	}
+	if t1.Section() == t2.Section() {
+		t.Fail()
+	}
+	t1.SetStart(time.Now())
+	t2.CopyFields(t1)
+	if t1.Start == t2.Start {
+		t.Fail()
+	}
+	if *t1.Start != *t2.Start {
+		t.Fail()
 	}
 }
