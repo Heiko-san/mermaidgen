@@ -15,11 +15,17 @@ type axisFormat string
 
 // Format definitions for x axis scale as described at
 // https://mermaidjs.github.io/gantt.html#scale.
-// The default is no axisFormat statement which results in FormatDateOnly.
+// The default is no axisFormat statement which results in FormatDate.
 const (
-	FormatDateOnly               axisFormat = `%Y-%m-%d`
-	FormatTimeOnly24h            axisFormat = `%H:%M`
-	FormatTimeOnly24hWithSeconds axisFormat = `%H:%M:%S`
+	FormatDateTime24FullhWithSeconds axisFormat = `%Y-%m-%d %H:%M:%S`
+	FormatDateTime24Full             axisFormat = `%Y-%m-%d %H:%M`
+	FormatDateTime24Short            axisFormat = `%y%m%d %H:%M`
+	FormatDate                       axisFormat = `%Y-%m-%d`
+	FormatDateShort                  axisFormat = `%y%m%d`
+	FormatWeekdayTime24              axisFormat = `%a %H:%M`
+	FormatWeekdayTime24WithSeconds   axisFormat = `%a %H:%M:%S`
+	FormatTime24                     axisFormat = `%H:%M`
+	FormatTime24WithSeconds          axisFormat = `%H:%M:%S`
 )
 
 ////////// Gantt ///////////////////////////////////////////////////////////////

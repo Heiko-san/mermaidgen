@@ -48,7 +48,7 @@ func ExampleGantt_settings() {
 	// setting the Title afterwards
 	g.Title = "This is my title"
 	// setting AxisFormat afterwards using constants
-	g.AxisFormat = gantt.FormatTimeOnly24h
+	g.AxisFormat = gantt.FormatTime24
 	fmt.Print(g)
 	//Output:
 	//gantt
@@ -111,7 +111,7 @@ func ExampleGantt_liveEditorLinks() {
 // The creation of Gantts, Sections and Tasks may yield errors
 func ExampleGantt_errorHandling() {
 	// parameter errors will be returned and no Gantt will be created
-	g1, err := gantt.NewGantt(5, gantt.FormatDateOnly)
+	g1, err := gantt.NewGantt(5, gantt.FormatDate)
 	fmt.Println(g1, err)
 	g2, err := gantt.NewGantt("title", 5)
 	fmt.Println(g2, err)
