@@ -17,15 +17,15 @@ type axisFormat string
 // https://mermaidjs.github.io/gantt.html#scale.
 // The default is no axisFormat statement which results in FormatDate.
 const (
-	FormatDateTime24FullhWithSeconds axisFormat = `%Y-%m-%d %H:%M:%S`
-	FormatDateTime24Full             axisFormat = `%Y-%m-%d %H:%M`
-	FormatDateTime24Short            axisFormat = `%y%m%d %H:%M`
-	FormatDate                       axisFormat = `%Y-%m-%d`
-	FormatDateShort                  axisFormat = `%y%m%d`
-	FormatWeekdayTime24              axisFormat = `%a %H:%M`
-	FormatWeekdayTime24WithSeconds   axisFormat = `%a %H:%M:%S`
-	FormatTime24                     axisFormat = `%H:%M`
-	FormatTime24WithSeconds          axisFormat = `%H:%M:%S`
+	FormatDateTime24WithSeconds    axisFormat = `%Y-%m-%d %H:%M:%S`
+	FormatDateTime24               axisFormat = `%Y-%m-%d %H:%M`
+	FormatDateTime24Short          axisFormat = `%y%m%d %H:%M`
+	FormatDate                     axisFormat = `%Y-%m-%d`
+	FormatDateShort                axisFormat = `%y%m%d`
+	FormatWeekdayTime24            axisFormat = `%a %H:%M`
+	FormatWeekdayTime24WithSeconds axisFormat = `%a %H:%M:%S`
+	FormatTime24                   axisFormat = `%H:%M`
+	FormatTime24WithSeconds        axisFormat = `%H:%M:%S`
 )
 
 ////////// Gantt ///////////////////////////////////////////////////////////////
