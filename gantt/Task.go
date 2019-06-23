@@ -35,6 +35,10 @@ func taskNew(i string, g *Gantt, s *Section, p []interface{}) (*Task, error) {
 	if !IsValidID(i) {
 		return nil, fmt.Errorf("invalid id")
 	}
+	_, alreadyExists := g.tasksMap[i]
+	if alreadyExists {
+		return nil, fmt.Errorf("id already exists")
+	}
 	t := &Task{id: i, gantt: g, section: s}
 	switch l, ok := len(p), false; {
 	case l > 5:
@@ -143,8 +147,8 @@ func (t *Task) String() (renderedElement string) {
 		duration = fmt.Sprintf("%ds", int(math.Abs(t.Duration.Seconds())))
 	}
 	tokens = append(tokens, duration)
-	text := fmt.Sprintf("%s : %s\n", title, strings.Join(tokens, ", "))
-	return text
+	renderedElement = fmt.Sprintf("%s : %s\n", title, strings.Join(tokens, ", "))
+	return
 }
 
 // SetStart takes a time.Time or a pointer to it, a Task pointer or a string

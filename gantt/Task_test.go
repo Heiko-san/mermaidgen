@@ -10,8 +10,8 @@ import (
 
 // Accessing the readonly fields of a Task
 func ExampleTask_privateFields() {
-	g := gantt.NewGantt()
-	s := g.AddSection("sect1")
+	g, _ := gantt.NewGantt()
+	s, _ := g.AddSection("sect1")
 	t, _ := s.AddTask("this_is_my_id")
 	// get a copy of the id field
 	id := t.ID()
@@ -26,7 +26,7 @@ func ExampleTask_privateFields() {
 
 // Different ways to set the fields of a Task
 func ExampleTask_settingValues() {
-	g := gantt.NewGantt()
+	g, _ := gantt.NewGantt()
 	// Get a Task with only ID and default values, there is little chance for
 	// an error here if you don't mess up the ID.
 	t1, _ := g.AddTask("id1")
@@ -82,30 +82,18 @@ func ExampleTask_settingValues() {
 	//A Task : crit, active, done, id8, 2019-06-20T09:15:30Z, 72000s
 }
 
-// The creation of Tasks may yield errors
-func ExampleTask_errorHandling() {
-	g := gantt.NewGantt()
-	// if there are parameter errors, no Task is created, an error is returned
-	t1, err := g.AddTask("id1", "my title", "1h50xyz")
-	fmt.Println(t1, err)
-	t1, err = g.AddTask("id1", "my title", "1h50m", "foobar")
-	fmt.Println(t1, err)
-	// same applies if the requested ID already exists
-	t1, err = g.AddTask("id1")
-	t2, err := g.AddTask("id1")
-	fmt.Println(t2, err)
-	// or if an invalid ID is provided
-	t2, err = g.AddTask("foo bar baz")
-	fmt.Println(t2, err)
-	//Output:
-	//<nil> SetDuration: "1h50xyz" is neither a valid duration nor Task ID
-	//<nil> SetStart: "foobar" is neither RFC3339 nor a valid Task ID
-	//<nil> id already exists
-	//<nil> invalid id
+func assert(t *testing.T, condition bool, msg ...interface{}) {
+	if !condition {
+		if len(msg) > 0 {
+			t.Errorf(msg[0].(string), msg[1:]...)
+		} else {
+			t.Fail()
+		}
+	}
 }
 
 func TestErrors(t *testing.T) {
-	g := gantt.NewGantt()
+	g, _ := gantt.NewGantt()
 	if _, err := g.AddTask("id1", 2); err == nil {
 		t.Errorf("no error returned: Title invalid type")
 	}
@@ -129,51 +117,30 @@ func TestErrors(t *testing.T) {
 	}
 }
 
-func TestCopy(t *testing.T) {
-	g := gantt.NewGantt()
-	s := g.AddSection("s")
+func TestTask_copyFields(t *testing.T) {
+	g, _ := gantt.NewGantt()
+	s, _ := g.AddSection("s")
 	t0, _ := g.AddTask("id0")
 	t1, _ := s.AddTask("id1", "title", "1h")
 	t1.Active = true
 	t1.After = t0
 	t2, _ := g.AddTask("id2")
 	t2.CopyFields(t1)
-	if t1.Critical != t2.Critical {
-		t.Fail()
-	}
-	if t1.Active != t2.Active {
-		t.Fail()
-	}
-	if t1.Done != t2.Done {
-		t.Fail()
-	}
-	if t2.After != t0 {
-		t.Fail()
-	}
-	if t1.Duration == t2.Duration {
-		t.Fail()
-	}
-	if *t1.Duration != *t2.Duration {
-		t.Fail()
-	}
-	if t2.Start != nil {
-		t.Fail()
-	}
-	if t1.Title != t2.Title {
-		t.Fail()
-	}
-	if t1.ID() == t2.ID() {
-		t.Fail()
-	}
-	if t1.Section() == t2.Section() {
-		t.Fail()
-	}
+
+	assert(t, t1.Critical == t2.Critical)
+	assert(t, t1.Active == t2.Active)
+	assert(t, t1.Done == t2.Done)
+	assert(t, t2.After == t0)
+	assert(t, t1.Duration != t2.Duration)
+	assert(t, *t1.Duration == *t2.Duration)
+	assert(t, t2.Start == nil)
+	assert(t, t1.Title == t2.Title)
+	assert(t, t1.ID() != t2.ID())
+	assert(t, t1.Section() != t2.Section())
+
 	t1.SetStart(time.Now())
 	t2.CopyFields(t1)
-	if t1.Start == t2.Start {
-		t.Fail()
-	}
-	if *t1.Start != *t2.Start {
-		t.Fail()
-	}
+
+	assert(t, t1.Start != t2.Start)
+	assert(t, *t1.Start == *t2.Start)
 }

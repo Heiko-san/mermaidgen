@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os/exec"
 	"runtime"
+	"sort"
 )
 
 ////////// AxisFormat //////////////////////////////////////////////////////////
@@ -38,29 +39,47 @@ type Gantt struct {
 // NewGantt is the constructor used to create a new Gantt object.
 // This object is the entrypoint for any further interactions with your diagram.
 // Always use the constructor, don't create Gantt objects directly.
-func NewGantt() (newGantt *Gantt) {
+// Optional initializer parameters can be given in the order Title, AxisFormat.
+func NewGantt(init ...interface{}) (newGantt *Gantt, err error) {
 	g := &Gantt{}
 	g.sectionsMap = make(map[string]*Section)
 	g.tasksMap = make(map[string]*Task)
-	return g
+	switch l, ok := len(init), false; {
+	case l > 1:
+		switch v := init[1].(type) {
+		case axisFormat:
+			g.AxisFormat = v
+		case string:
+			g.AxisFormat = axisFormat(v)
+		default:
+			return nil, fmt.Errorf("value for AxisFormat was no axisFormat")
+		}
+		fallthrough
+	case l > 0:
+		g.Title, ok = init[0].(string)
+		if !ok {
+			return nil, fmt.Errorf("value for Title was no string")
+		}
+	}
+	return g, nil
 }
 
 // String recursively renders the whole diagram to mermaid code lines.
 func (g *Gantt) String() (renderedElement string) {
-	text := "gantt\ndateFormat YYYY-MM-DDTHH:mm:ssZ\n"
+	renderedElement = "gantt\ndateFormat YYYY-MM-DDTHH:mm:ssZ\n"
 	if g.AxisFormat != "" {
-		text += fmt.Sprintln("axisFormat", g.AxisFormat)
+		renderedElement += fmt.Sprintln("axisFormat", g.AxisFormat)
 	}
 	if g.Title != "" {
-		text += fmt.Sprintln("title", g.Title)
+		renderedElement += fmt.Sprintln("title", g.Title)
 	}
 	for _, t := range g.tasks {
-		text += t.String()
+		renderedElement += t.String()
 	}
 	for _, s := range g.sections {
-		text += s.String()
+		renderedElement += s.String()
 	}
-	return text
+	return
 }
 
 // Structs for JSON encode
@@ -75,7 +94,7 @@ type dataJSON struct {
 // LiveURL renders the Gantt and generates a view URL for
 // https://mermaidjs.github.io/mermaid-live-editor from it.
 func (g *Gantt) LiveURL() (url string) {
-	liveURL := `https://mermaidjs.github.io/mermaid-live-editor/#/edit/`
+	liveURL := `https://mermaidjs.github.io/mermaid-live-editor/#/view/`
 	data, _ := json.Marshal(dataJSON{
 		Code: g.String(), Mermaid: mermaidJSON{Theme: "default"}})
 	return liveURL + base64.URLEncoding.EncodeToString(data)
@@ -100,42 +119,49 @@ func (g *Gantt) ViewInBrowser() (err error) {
 
 ////////// add Items ///////////////////////////////////////////////////////////
 
-// AddSection ...
-func (g *Gantt) AddSection(id string) (newSection *Section) {
-	_, alreadyExists := g.sectionsMap[id]
-	if alreadyExists {
-		return nil
+// AddSection is used to add a new Section to this Gantt diagram. If the
+// provided ID already exists, no new Section is created and an error is
+// returned. The ID can later be used to look up the created Section using
+// Gantt's GetSection method.
+func (g *Gantt) AddSection(id string) (newSection *Section, err error) {
+	newSection, err = sectionNew(id, g)
+	if err != nil {
+		return
 	}
-	s := &Section{id: id, gantt: g}
-	g.sectionsMap[id] = s
-	g.sections = append(g.sections, s)
-	return s
+	g.sectionsMap[id] = newSection
+	g.sections = append(g.sections, newSection)
+	return
 }
 
-// AddTask ...
+// AddTask is used to add a new Task to this Gantt diagram. If the provided ID
+// already exists or is invalid, no new Task is created and an error is
+// returned. The ID can later be used to look up the created Task using Gantt's
+// GetTask method. Optional initializer parameters can be given in the order
+// Title, Duration, Start, Critical, Active, Done. Duration and Start are set
+// via Task's SetDuration and SetStart respectively.
 func (g *Gantt) AddTask(id string, init ...interface{}) (newTask *Task, err error) {
-	_, alreadyExists := g.tasksMap[id]
-	if alreadyExists {
-		return nil, fmt.Errorf("id already exists")
+	newTask, err = taskNew(id, g, nil, init)
+	if err != nil {
+		return
 	}
-	t, e := taskNew(id, g, nil, init)
-	if e != nil {
-		return nil, e
-	}
-	g.tasksMap[id] = t
-	g.tasks = append(g.tasks, t)
-	return t, nil
+	g.tasksMap[id] = newTask
+	g.tasks = append(g.tasks, newTask)
+	return
 }
 
 ////////// get Items ///////////////////////////////////////////////////////////
 
-// GetSection ...
+// GetSection looks up a previously defined Section by its ID.
+// If this ID doesn't exist, nil is returned.
+// Use Gantt's AddSection to create new Sections.
 func (g *Gantt) GetSection(id string) (existingSection *Section) {
 	// if not found -> nil
 	return g.sectionsMap[id]
 }
 
-// GetTask ...
+// GetTask looks up a previously defined Task by its ID.
+// If this ID doesn't exist, nil is returned.
+// Use Gantt's or Section's AddTask to create new Tasks.
 func (g *Gantt) GetTask(id string) (existingTask *Task) {
 	// if not found -> nil
 	return g.tasksMap[id]
@@ -143,20 +169,32 @@ func (g *Gantt) GetTask(id string) (existingTask *Task) {
 
 ////////// list Items //////////////////////////////////////////////////////////
 
-// ListSections ...
+// ListSections returns a slice of all Sections previously added to this
+// Gantt diagram in the order they were defined.
 func (g *Gantt) ListSections() (allSections []*Section) {
-	values := make([]*Section, 0, len(g.sectionsMap))
-	for _, v := range g.sectionsMap {
-		values = append(values, v)
-	}
-	return values
+	allSections = make([]*Section, len(g.sections))
+	copy(allSections, g.sections)
+	return
 }
 
-// ListTasks ...
+// ListLocalTasks returns a slice of all Tasks previously added to this
+// Gantt diagram directly (not to Sections) in the order they were defined.
+func (g *Gantt) ListLocalTasks() (localTasks []*Task) {
+	localTasks = make([]*Task, len(g.tasks))
+	copy(localTasks, g.tasks)
+	return
+}
+
+// ListTasks returns a slice of all Tasks previously added to this
+// Gantt diagram and all of its Sections in alphabetic order by ID.
 func (g *Gantt) ListTasks() (allTasks []*Task) {
-	values := make([]*Task, 0, len(g.tasksMap))
+	allTasks = make([]*Task, 0, len(g.tasksMap))
 	for _, v := range g.tasksMap {
-		values = append(values, v)
+		allTasks = append(allTasks, v)
 	}
-	return values
+	// sort the slice of structs by ID field to provide constant order
+	sort.Slice(allTasks, func(i, j int) bool {
+		return allTasks[i].id < allTasks[j].id
+	})
+	return
 }

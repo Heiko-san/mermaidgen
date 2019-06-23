@@ -4,58 +4,68 @@ import (
 	"fmt"
 )
 
+// Section represents gantt sections that can be added to the Gantt diagram.
+// Create an instance of Section via Gantt's AddSection method, do not create
+// instances directly. Already defined IDs can be looked up via Gantt's
+// GetSection method or iterated over via its ListSections method.
 type Section struct {
 	id    string
 	gantt *Gantt
 	tasks []*Task
 }
 
-func (s *Section) String() (renderedElement string) {
-	text := fmt.Sprintln("section", s.id)
-	for _, task := range s.tasks {
-		text += task.String()
-	}
-	return text
-}
-
-// AddTask ...
-// If error
-func (s *Section) AddTask(id string, init ...interface{}) (newTask *Task, err error) {
-	_, alreadyExists := s.gantt.tasksMap[id]
+// Private constructor for use in Add-functions.
+func sectionNew(i string, g *Gantt) (*Section, error) {
+	_, alreadyExists := g.sectionsMap[i]
 	if alreadyExists {
 		return nil, fmt.Errorf("id already exists")
 	}
-	t, e := taskNew(id, s.gantt, s, init)
-	if e != nil {
-		return nil, e
-	}
-	s.gantt.tasksMap[id] = t
-	s.tasks = append(s.tasks, t)
-	return t, nil
+	return &Section{id: i, gantt: g}, nil
 }
 
-/*
-   section A section
-   Completed task            :done,    des1, 2014-01-06,2014-01-08
-   Active task               :active,  des2, 2014-01-09, 3d
-   Future task               :         des3, after des2, 5d
-   Future task2              :         des4, after des3, 5d
+// ID provides access to the Sections readonly field id. This is used as the
+// Section's title since the title needs to be unique. However the strict rules
+// for Task's IDs don't apply here, feel free to use spaces and special
+// characters.
+func (s *Section) ID() (id string) {
+	return s.id
+}
 
-   section Critical tasks
-   Completed task in the critical line :crit, done, 2014-01-06,24h
-   Implement parser and jison          :crit, done, after des1, 2d
-   Create tests for parser             :crit, active, 3d
-   Future task in critical line        :crit, 5d
-   Create tests for renderer           :2d
-   Add to mermaid                      :1d
+// Gantt provides access to the top level Gantt diagram to be able to access
+// Adder, Getter and Lister methods.
+func (s *Section) Gantt() (topLevel *Gantt) {
+	return s.gantt
+}
 
-   section Documentation
-   Describe gantt syntax               :active, a1, after des1, 3d
-   Add gantt diagram to demo page      :after a1  , 20h
-   Add another diagram to demo page    :doc1, after a1  , 48h
+// String renders this diagram element to a section definition line.
+func (s *Section) String() (renderedElement string) {
+	renderedElement = fmt.Sprintln("section", s.id)
+	for _, task := range s.tasks {
+		renderedElement += task.String()
+	}
+	return
+}
 
-   section Last section
-   Describe gantt syntax               :after doc1, 3d
-   Add gantt diagram to demo page      :20h
-   Add another diagram to demo page    :48h
-*/
+// AddTask is used to add a new Task to this Section. If the provided ID already
+// exists or is invalid, no new Task is created and an error is returned.
+// The ID can later be used to look up the created Task using Gantt's GetTask
+// method. Optional initializer parameters can be given in the order Title,
+// Duration, Start, Critical, Active, Done. Duration and Start are set via
+// Task's SetDuration and SetStart respectively.
+func (s *Section) AddTask(id string, init ...interface{}) (newTask *Task, err error) {
+	newTask, err = taskNew(id, s.gantt, s, init)
+	if err != nil {
+		return
+	}
+	s.gantt.tasksMap[id] = newTask
+	s.tasks = append(s.tasks, newTask)
+	return
+}
+
+// ListLocalTasks returns a slice of all Tasks previously added to this
+// Section in the order they were defined.
+func (s *Section) ListLocalTasks() (localTasks []*Task) {
+	localTasks = make([]*Task, len(s.tasks))
+	copy(localTasks, s.tasks)
+	return
+}
