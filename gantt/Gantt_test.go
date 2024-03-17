@@ -105,7 +105,7 @@ func ExampleGantt_liveEditorLinks() {
 	g.AddTask("t2", "another task", "2h")
 	// you can also use g.ViewInBrowser() to open the URL in browser directly
 	fmt.Println(g.LiveURL())
-	//Output: https://mermaidjs.github.io/mermaid-live-editor/#/view/eyJjb2RlIjoiZ2FudHRcbmRhdGVGb3JtYXQgWVlZWS1NTS1ERFRISDptbTpzc1pcbmEgdGFzayA6IHQxLCAyMDE5LTA2LTIwVDA5OjE1OjMwWiwgMzYwMHNcbmFub3RoZXIgdGFzayA6IDcyMDBzXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ==
+	// Output: https://mermaid.live/view/#pako:eNo0zbEKg0AMgOFXOTJ7EJVazCzFxc3lxCX00lranOClk_jupYWuPz98O1zXKEBw52Q2p8gml3VTNhdCCH4YfNeNfU-qlPM0J3bG-enIWVm4CsvWY-MrHLGl8kQ1ToWrG8Q8J06rLbL9_3P1q1CAyqb8iEA72CL61aPc-P0yOI5PAAAA___xki0z
 }
 
 // The creation of Gantts, Sections and Tasks may yield errors

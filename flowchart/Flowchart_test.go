@@ -60,5 +60,5 @@ func ExampleFlowchart_liveEditorLinks() {
 	f.AddEdge(f.AddNode("n1"), f.AddNode("n2"))
 	// you can also use f.ViewInBrowser() to open the URL in browser directly
 	fmt.Println(f.LiveURL())
-	//Output: https://mermaidjs.github.io/mermaid-live-editor/#/view/eyJjb2RlIjoiZ3JhcGggVEJcbm4xW1wibjFcIl1cbm4yW1wibjJcIl1cbm4xIC0tXHUwMDNlIG4yXG4iLCJtZXJtYWlkIjp7InRoZW1lIjoiZGVmYXVsdCJ9fQ==
+	// Output: https://mermaid.live/view/#pako:eNqqVkrOT0lVslJKL0osyFAIcYrJyzOMjlHKM4xRio3JyzMCsY0gbEMFXd2YUgMD41SFPKOYPCUdpdzUotzEzBQlq2qlkozUXJA5KalpiaU5JUq1tYAAAAD__yEwHQk=
 }
